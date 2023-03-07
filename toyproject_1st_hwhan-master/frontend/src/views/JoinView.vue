@@ -21,6 +21,7 @@
             autocomplete="off"
             v-model="pwd"
             required
+            @blur="checkPwd"
           />
           <span
             class="material-symbols-outlined"
@@ -28,7 +29,8 @@
             @click="togglePwd"
             >{{ pwdActiveIcon }}</span
           >
-          <div id="pwdResult" class="result">
+          <div class="result">{{ pwdResult }}</div>
+          <div id="pwdResult" class="result gray">
             영문,숫자,특수문자 2가지 이상 포함, 8자 이상 32자 이하, 연속 3자
             이상 동일한 숫자,문자 제외
           </div>
@@ -43,6 +45,7 @@
             placeholder="입력했던 비밀번호를 다시 입력해주세요"
             v-model="pwd2"
             required
+            @blur="checkPwd2"
           />
           <span
             class="material-symbols-outlined"
@@ -50,7 +53,7 @@
             @click="togglePwd2"
             >{{ pwdActiveIcon2 }}</span
           >
-          <div id="pwdCheck" class="result"></div>
+          <div class="result">{{ pwdResult2 }}</div>
         </div>
 
         <div id="nick">
@@ -61,8 +64,9 @@
             placeholder="영문,숫자,한글로 2자 이상 8자 이하"
             v-model="nick"
             required
+            @blur="checkNick"
           />
-          <div id="nickResult" class="result"></div>
+          <div id="nickResult" class="result">{{ nickResult }}</div>
         </div>
 
         <div id="phone">
@@ -73,8 +77,9 @@
             placeholder="- 제외한 숫자만"
             v-model="phone"
             required
+            @blur="checkPhone"
           />
-          <div id="phoneResult" class="result"></div>
+          <div id="phoneResult" class="result">{{ phoneResult }}</div>
         </div>
 
         <input type="submit" id="join-btn" value="회원가입" />
@@ -99,7 +104,11 @@ export default {
       pwdType2: 'password',
       pwdActive2: false,
       pwdActiveIcon2: 'visibility_off',
-      idResult: ''
+      idResult: '',
+      pwdResult: '',
+      pwdResult2: '',
+      nickResult: '',
+      phoneResult: ''
     }
   },
   setup() {},
@@ -108,9 +117,12 @@ export default {
   unmounted() {},
   methods: {
     checkId() {
+      // 이메일 형식이 (알파벳,숫자,-,_,.)@lutes.co.kr
       const idCheck =
         // eslint-disable-next-line
         /^([0-9a-zA-Z_\.-]+)@lutes.co.kr$/
+
+      // 공백 체크
       const spaceCheck = /\s/
 
       if (this.id === '') {
@@ -121,6 +133,66 @@ export default {
         this.idResult = '이메일 형식이 올바르지 않습니다'
       } else {
         this.idResult = ''
+      }
+    },
+    checkPwd() {
+      // 영문/숫자/특수문자 2가지 이상 포함, 8자 이상 32자 이하
+      const pwdCheck =
+        /^(?!((?:[A-Za-z]+)|(?:[~!@#$%^&*()_+=]+)|(?:[0-9]+))$)[A-Za-z\d~!@#$%^&*()_+=]{8,32}$/
+      // 같은 문자 3번 이상 X
+      const pwd3WordCheck = /(\w)\1\1/
+      // 공백 체크
+      const spaceCheck = /\s/
+
+      if (this.pwd === '') {
+        this.pwdResult = '비밀번호를 입력해주세요'
+      } else if (this.pwd.search(spaceCheck) !== -1) {
+        this.pwdResult = '공백없이 작성해주세요'
+      } else if (!pwdCheck.test(this.pwd)) {
+        this.pwdResult = '비밀번호를 다시 확인해주세요'
+      } else if (pwd3WordCheck.test(this.pwd)) {
+        this.pwdResult = '같은 문자를 3번 이상 사용할 수 없습니다'
+      } else {
+        this.pwdResult = ''
+      }
+    },
+    checkPwd2() {
+      if (this.pwd !== this.pwd2) {
+        this.pwdResult2 = '비밀번호가 동일하지 않습니다'
+      } else {
+        this.pwdResult2 = ''
+      }
+    },
+    checkNick() {
+      // 닉네임 : 영문, 숫자, 한글로 2자 ~ 8자
+      const nickCheck = /^[a-zA-Z0-9가-힣]{2,8}$/
+      // 공백 체크
+      const spaceCheck = /\s/
+
+      if (this.nick === '') {
+        this.nickResult = '닉네임을 입력해주세요'
+      } else if (this.nick.search(spaceCheck) !== -1) {
+        this.nickResult = '공백없이 작성해주세요'
+      } else if (!nickCheck.test(this.nick)) {
+        this.nickResult = '닉네임을 다시 확인해주세요'
+      } else {
+        this.nickResult = ''
+      }
+    },
+    checkPhone() {
+      // 전화번호 : 11자리 숫자만
+      const phoneCheck = /[0-9]{11}/g
+      // 공백 체크
+      const spaceCheck = /\s/
+
+      if (this.phone === '') {
+        this.phoneResult = '전화번호를 입력해주세요'
+      } else if (this.phone.search(spaceCheck) !== -1) {
+        this.phoneCheck = '공백없이 작성해주세요'
+      } else if (!phoneCheck.test(this.phone)) {
+        this.phoneResult = '전화번호를 다시 확인해주세요'
+      } else {
+        this.phoneResult = ''
       }
     },
     togglePwd() {
@@ -146,7 +218,7 @@ export default {
     join() {
       console.log('제출')
       const joinData = {}
-      joinData.email = this.email
+      joinData.email = this.id
       joinData.pwd = this.pwd
       joinData.pwd2 = this.pwd2
       joinData.phone = this.phone
@@ -227,7 +299,7 @@ input[type='password'] {
   cursor: pointer;
   height: 48px;
   border-radius: 4px;
-  background-color: #225ba7;
+  background-color: var(--main-color);
   color: #ffffff;
   margin-top: 20px;
 }
@@ -268,6 +340,10 @@ label[for='joinAgree-check'] {
 .result {
   line-height: 16px;
   font-size: 13px;
+  color: #e02525;
+  margin-top: 5px;
+}
+.gray {
   color: #929292;
 }
 </style>

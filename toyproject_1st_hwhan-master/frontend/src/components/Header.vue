@@ -180,7 +180,6 @@ export default {
 }
 #login-btn,
 #modal-closed,
-.inputbox,
 .modal-login-btn,
 #alarm-btn {
   background: inherit;
@@ -190,6 +189,16 @@ export default {
   padding: 0;
   overflow: visible;
   cursor: pointer;
+}
+
+.inputbox {
+  background: inherit;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  overflow: visible;
+  outline: none;
 }
 .material-symbols-outlined {
   display: flex;
@@ -207,7 +216,7 @@ export default {
   width: 320px;
   height: 48px;
   border-radius: 4px;
-  background-color: rgb(107, 196, 255);
+  background-color: var(--main-color);
   color: #ffffff;
 }
 #line {

@@ -8,6 +8,6 @@ public interface MemberService {
 
     public List<MemberVo> getMemberList();
 
-    public int join(MemberVo vo);
+    public int join(MemberVo vo) throws Exception;
     
 }

@@ -36,7 +36,7 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    public ResMsg join(@RequestBody MemberVo vo) {
+    public ResMsg join(@RequestBody MemberVo vo) throws Exception{
         System.out.println("컨트롤러");
         System.out.println(vo);
         ResMsg res = new ResMsg();

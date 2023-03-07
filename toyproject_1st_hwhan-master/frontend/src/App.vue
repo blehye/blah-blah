@@ -30,8 +30,14 @@ export default {
 <style>
 @import './assets/styles/reset.css';
 @import './assets/styles/variables.css';
+@import './assets/styles/common.css';
+
+*,
+div,
+span {
+  font-family: 'Noto Sans KR', sans-serif;
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
