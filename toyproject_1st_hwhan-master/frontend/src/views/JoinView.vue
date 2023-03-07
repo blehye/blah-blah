@@ -9,14 +9,8 @@
 
         <div id="id">
           <div class="text">이메일</div>
-          <input
-            type="text"
-            name="email"
-            v-model="email"
-            required
-            @blur="checkEmail"
-          />
-          <div id="idResult" class="result"></div>
+          <input type="text" name="id" v-model="id" required @blur="checkId" />
+          <div id="idResult" class="result">{{ idResult }}</div>
         </div>
 
         <div id="pwd">
@@ -94,7 +88,7 @@ export default {
   components: {},
   data() {
     return {
-      email: '',
+      id: '',
       pwd: '',
       pwd2: '',
       phone: '',
@@ -104,7 +98,8 @@ export default {
       pwdActiveIcon: 'visibility_off',
       pwdType2: 'password',
       pwdActive2: false,
-      pwdActiveIcon2: 'visibility_off'
+      pwdActiveIcon2: 'visibility_off',
+      idResult: ''
     }
   },
   setup() {},
@@ -112,7 +107,16 @@ export default {
   mounted() {},
   unmounted() {},
   methods: {
-    checkEmail() {},
+    checkId() {
+      const idCheck =
+        // eslint-disable-next-line
+        /^([0-9a-zA-Z_\.-]+)@lutes.co.kr$/
+      if (!idCheck.test(this.id)) {
+        this.idResult = '이메일 형식이 올바르지 않습니다'
+      } else {
+        this.idResult = ''
+      }
+    },
     togglePwd() {
       this.pwdActive = !this.pwdActive
       if (this.pwdActive) {
