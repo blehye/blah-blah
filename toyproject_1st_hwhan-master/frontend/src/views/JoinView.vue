@@ -111,7 +111,13 @@ export default {
       const idCheck =
         // eslint-disable-next-line
         /^([0-9a-zA-Z_\.-]+)@lutes.co.kr$/
-      if (!idCheck.test(this.id)) {
+      const spaceCheck = /\s/
+
+      if (this.id === '') {
+        this.idResult = '이메일을 입력해주세요'
+      } else if (this.id.search(spaceCheck) !== -1) {
+        this.idResult = '공백없이 작성해주세요'
+      } else if (!idCheck.test(this.id)) {
         this.idResult = '이메일 형식이 올바르지 않습니다'
       } else {
         this.idResult = ''
