@@ -22,13 +22,18 @@
         <div id="pwd">
           <div class="text">비밀번호</div>
           <input
-            type="password"
+            :type="pwdType"
             name="pwd"
             autocomplete="off"
             v-model="pwd"
             required
           />
-          <span class="material-symbols-outlined">visibility</span>
+          <span
+            class="material-symbols-outlined"
+            :class="{ pwdActive: pwdActive }"
+            @click="togglePwd"
+            >{{ pwdActiveIcon }}</span
+          >
           <div id="pwdResult" class="result">
             영문,숫자,특수문자 2가지 이상 포함, 8자 이상 32자 이하, 연속 3자
             이상 동일한 숫자,문자 제외
@@ -38,14 +43,19 @@
         <div id="pwd">
           <div class="text">비밀번호 확인</div>
           <input
-            type="password"
+            :type="pwdType2"
             name="pwd2"
             autocomplete="off"
             placeholder="입력했던 비밀번호를 다시 입력해주세요"
             v-model="pwd2"
             required
           />
-          <span class="material-symbols-outlined">visibility</span>
+          <span
+            class="material-symbols-outlined"
+            :class="{ pwdActive2: pwdActive2 }"
+            @click="togglePwd2"
+            >{{ pwdActiveIcon2 }}</span
+          >
           <div id="pwdCheck" class="result"></div>
         </div>
 
@@ -88,7 +98,13 @@ export default {
       pwd: '',
       pwd2: '',
       phone: '',
-      nick: ''
+      nick: '',
+      pwdType: 'password',
+      pwdActive: false,
+      pwdActiveIcon: 'visibility_off',
+      pwdType2: 'password',
+      pwdActive2: false,
+      pwdActiveIcon2: 'visibility_off'
     }
   },
   setup() {},
@@ -97,6 +113,26 @@ export default {
   unmounted() {},
   methods: {
     checkEmail() {},
+    togglePwd() {
+      this.pwdActive = !this.pwdActive
+      if (this.pwdActive) {
+        this.pwdType = 'text'
+        this.pwdActiveIcon = 'visibility'
+      } else {
+        this.pwdType = 'password'
+        this.pwdActiveIcon = 'visibility_off'
+      }
+    },
+    togglePwd2() {
+      this.pwdActive2 = !this.pwdActive2
+      if (this.pwdActive2) {
+        this.pwdType2 = 'text'
+        this.pwdActiveIcon2 = 'visibility'
+      } else {
+        this.pwdType2 = 'password'
+        this.pwdActiveIcon2 = 'visibility_off'
+      }
+    },
     join() {
       console.log('제출')
       const joinData = {}
@@ -115,7 +151,7 @@ export default {
 </script>
 <style scoped>
 #join-main {
-  width: 460px;
+  width: 444px;
   margin: auto;
 }
 form {
@@ -155,7 +191,7 @@ input[type='text']:not(.choices__input),
 input[type='password'] {
   width: 100%;
   height: 40px;
-  padding: 14px;
+  padding: 14px 45px 14px 14px;
   border-radius: 4px;
   border: 1px solid #d9d9d9;
 }
@@ -165,7 +201,7 @@ input[type='password'] {
 #pwd div + input + span {
   position: absolute;
   left: 90%;
-  top: 48px;
+  top: 45px;
   color: #d9d9d9;
 }
 #pwdResult {
