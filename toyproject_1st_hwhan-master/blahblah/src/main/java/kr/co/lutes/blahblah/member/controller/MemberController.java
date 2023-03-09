@@ -1,10 +1,10 @@
 package kr.co.lutes.blahblah.member.controller;
 
-import java.util.List;
+import java.net.URLDecoder;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,19 +26,8 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    
-    @GetMapping("/test")
-    public String test(Model model) {
-        List<MemberVo> memberList = memberService.getMemberList();
-        model.addAttribute("memberList", memberList);
-        model.addAttribute("memberCnt", memberList.size());
-        return "member/test";
-    }
-
     @PostMapping("/join")
     public ResMsg join(@RequestBody MemberVo vo) throws Exception{
-        System.out.println("컨트롤러");
-        System.out.println(vo);
         ResMsg res = new ResMsg();
 
         int result = memberService.join(vo);
@@ -49,6 +38,77 @@ public class MemberController {
             res.setResult(Status.ERROR);
         }
         
+        return res;
+    }
+
+    @PostMapping("/checkIdDup")
+    public ResMsg checkIdDup(@RequestBody MemberVo vo) {
+        boolean result = memberService.checkIdDup(vo.getEmail());
+        ResMsg res = new ResMsg();
+        if(!result) {
+            res.setResult(Status.SUCCESS);
+        }else {
+            res.setResult(Status.ERROR);
+        }
+        return res;
+    }
+
+    @PostMapping("/checkNickDup")
+    public ResMsg checkNickDup(@RequestBody MemberVo vo) {
+        boolean result = memberService.checkNickDup(vo.getNick());
+        ResMsg res = new ResMsg();
+        if(!result) {
+            res.setResult(Status.SUCCESS);
+        }else {
+            res.setResult(Status.ERROR);
+        }
+        return res;
+    }
+
+    @PostMapping("/login")
+    public ResMsg login(@RequestBody MemberVo vo) {
+        ResMsg res = new ResMsg();
+        System.out.println("로그인 컨트롤러");
+        try {
+            MemberVo loginMember = memberService.login(vo);
+            System.out.println(loginMember);
+            
+            if (loginMember != null) {
+                res.setLoginMember(loginMember);
+                res.setResult(Status.SUCCESS);
+            } else {
+                res.setResult(Status.ERROR);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return res;
+    }
+
+    @PostMapping("/emailAuth")
+    public ResMsg login(@RequestBody String email) {
+        ResMsg res = new ResMsg();
+        System.out.println("인증 컨트롤러");
+        
+        String decEmail = "";
+        
+        try {
+            decEmail = URLDecoder.decode(email, "utf-8");
+            System.out.println(decEmail);
+            int result = memberService.certificateEmail(decEmail.substring(0, decEmail.length() - 1));
+            
+            if (result == 1) {
+                res.setResult(Status.SUCCESS);
+            } else {
+                res.setResult(Status.ERROR);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return res;
     }
     

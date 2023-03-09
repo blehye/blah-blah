@@ -1,6 +1,6 @@
 <template>
   <div id="join-main">
-    <form @submit.prevent="join">
+    <form>
       <div id="join-area">
         <div id="join-title">
           <div class="title">회원가입</div>
@@ -9,7 +9,11 @@
 
         <div id="id">
           <div class="text">이메일</div>
-          <input type="text" name="id" v-model="id" required @blur="checkId" />
+          <div class="relative">
+            <input type="text" name="id" v-model="id" required @keyup="checkIdValidity" :readonly="validity.checkIdDuplicate == true"/>
+            <input type="button" :value="idDupBtnStr" class="duplicate-btn" @click="checkIdDup" :class="{idDupBtnActive : idDupBtnActive}" :disabled="validity.checkIdDuplicate == true">
+          </div>
+
           <div id="idResult" class="result">{{ idResult }}</div>
         </div>
 
@@ -21,7 +25,7 @@
             autocomplete="off"
             v-model="pwd"
             required
-            @blur="checkPwd"
+            @keyup="checkPwdValidity"
           />
           <span
             class="material-symbols-outlined"
@@ -45,7 +49,7 @@
             placeholder="입력했던 비밀번호를 다시 입력해주세요"
             v-model="pwd2"
             required
-            @blur="checkPwd2"
+            @keyup="checkPwd2Validity"
           />
           <span
             class="material-symbols-outlined"
@@ -58,14 +62,18 @@
 
         <div id="nick">
           <div class="text">닉네임</div>
-          <input
-            type="text"
-            name="nick"
-            placeholder="영문,숫자,한글로 2자 이상 8자 이하"
-            v-model="nick"
-            required
-            @blur="checkNick"
-          />
+          <div class="relative">
+            <input
+              type="text"
+              name="nick"
+              placeholder="영문,숫자,한글로 2자 이상 8자 이하"
+              v-model="nick"
+              required
+              @keyup="checkNickValidity"
+              :readonly="validity.checkNickDuplicate == true"
+            />
+            <input type="button" :value="nickDupBtnStr" class="duplicate-btn" @click="checkNickDup" :class="{nickDupBtnActive: nickDupBtnActive}" :disabled="validity.checkNickDuplicate == true">
+          </div>
           <div id="nickResult" class="result">{{ nickResult }}</div>
         </div>
 
@@ -77,12 +85,12 @@
             placeholder="- 제외한 숫자만"
             v-model="phone"
             required
-            @blur="checkPhone"
+            @keyup="checkPhoneValidity"
           />
           <div id="phoneResult" class="result">{{ phoneResult }}</div>
         </div>
 
-        <input type="submit" id="join-btn" value="회원가입" />
+        <input @click="join(event)" type="button" id="join-btn" value="회원가입" :class="{'join-btn-active': joinActive}"/>
       </div>
     </form>
   </div>
@@ -108,23 +116,61 @@ export default {
       pwdResult: '',
       pwdResult2: '',
       nickResult: '',
-      phoneResult: ''
+      phoneResult: '',
+      joinActive: false,
+
+      validity: {
+        id: false,
+        pwd: false,
+        pwd2: false,
+        nick: false,
+        phone: false,
+        checkIdDuplicate: false,
+        checkNickDuplicate: false
+      },
+      idDupBtnStr: '중복체크',
+      nickDupBtnStr: '중복체크',
+      idDupBtnActive: false,
+      nickDupBtnActive: false
+
     }
   },
   setup() {},
-  created() {},
+  created() {
+    console.log(this.$store.state.loginMember)
+  },
   mounted() {},
   unmounted() {},
   methods: {
+    checkIdValidity() {
+      this.checkId()
+      this.checkTotalJoinValidity()
+    },
+    checkPwdValidity() {
+      this.checkPwd()
+      this.checkTotalJoinValidity()
+    },
+    checkPwd2Validity() {
+      this.checkPwd2()
+      this.checkTotalJoinValidity()
+    },
+    checkNickValidity() {
+      this.checkNick()
+      this.checkTotalJoinValidity()
+    },
+    checkPhoneValidity() {
+      this.checkPhone()
+      this.checkTotalJoinValidity()
+    },
     checkId() {
       // 이메일 형식이 (알파벳,숫자,-,_,.)@lutes.co.kr
       const idCheck =
         // eslint-disable-next-line
         /^([0-9a-zA-Z_\.-]+)@lutes.co.kr$/
-
       // 공백 체크
       const spaceCheck = /\s/
 
+      this.validity.id = false
       if (this.id === '') {
         this.idResult = '이메일을 입력해주세요'
       } else if (this.id.search(spaceCheck) !== -1) {
@@ -133,6 +179,7 @@ export default {
         this.idResult = '이메일 형식이 올바르지 않습니다'
       } else {
         this.idResult = ''
+        this.validity.id = true
       }
     },
     checkPwd() {
@@ -143,7 +190,7 @@ export default {
       const pwd3WordCheck = /(\w)\1\1/
       // 공백 체크
       const spaceCheck = /\s/
-
+      this.validity.pwd = false
       if (this.pwd === '') {
         this.pwdResult = '비밀번호를 입력해주세요'
       } else if (this.pwd.search(spaceCheck) !== -1) {
@@ -154,13 +201,16 @@ export default {
         this.pwdResult = '같은 문자를 3번 이상 사용할 수 없습니다'
       } else {
         this.pwdResult = ''
+        this.validity.pwd = true
       }
     },
     checkPwd2() {
+      this.validity.pwd2 = false
       if (this.pwd !== this.pwd2) {
         this.pwdResult2 = '비밀번호가 동일하지 않습니다'
       } else {
         this.pwdResult2 = ''
+        this.validity.pwd2 = true
       }
     },
     checkNick() {
@@ -169,6 +219,7 @@ export default {
       // 공백 체크
       const spaceCheck = /\s/
 
+      this.validity.nick = false
       if (this.nick === '') {
         this.nickResult = '닉네임을 입력해주세요'
       } else if (this.nick.search(spaceCheck) !== -1) {
@@ -177,6 +228,7 @@ export default {
         this.nickResult = '닉네임을 다시 확인해주세요'
       } else {
         this.nickResult = ''
+        this.validity.nick = true
       }
     },
     checkPhone() {
@@ -185,6 +237,7 @@ export default {
       // 공백 체크
       const spaceCheck = /\s/
 
+      this.validity.phone = false
       if (this.phone === '') {
         this.phoneResult = '전화번호를 입력해주세요'
       } else if (this.phone.search(spaceCheck) !== -1) {
@@ -193,6 +246,7 @@ export default {
         this.phoneResult = '전화번호를 다시 확인해주세요'
       } else {
         this.phoneResult = ''
+        this.validity.phone = true
       }
     },
     togglePwd() {
@@ -215,8 +269,31 @@ export default {
         this.pwdActiveIcon2 = 'visibility_off'
       }
     },
-    join() {
+    checkTotalJoinValidity() {
+      if (this.validity.id && this.validity.pwd && this.validity.pwd2 && this.validity.nick && this.validity.phone && this.validity.checkIdDuplicate && this.validity.checkNickDuplicate) {
+        this.joinActive = true
+      } else {
+        this.joinActive = false
+      }
+    },
+    join(event) {
+      if (!(this.validity.id && this.validity.pwd && this.validity.pwd2 && this.validity.nick && this.validity.phone)) {
+        alert('항목을 입력해주세요')
+        event.preventDefault()
+      }
+      if (this.validity.checkIdDuplicate === false) {
+        alert('아이디 중복검사를 진행해주세요')
+        event.preventDefault()
+      }
+      if (this.validity.checkNickDuplicate === false) {
+        alert('닉네임 중복검사를 진행해주세요')
+        event.preventDefault()
+      }
+      if (!(this.validity.id && this.validity.pwd && this.validity.pwd2 && this.validity.nick && this.validity.phone && this.validity.checkIdDuplicate && this.validity.checkNickDuplicate)) {
+        event.preventDefault()
+      }
       console.log('제출')
+      this.joinActive = true
       const joinData = {}
       joinData.email = this.id
       joinData.pwd = this.pwd
@@ -225,8 +302,59 @@ export default {
       joinData.nick = this.nick
       axios
         .post('/api/member/join', joinData)
-        .then((response) => console.log(response.data.result))
+        .then((response) => {
+          console.log(response.data.result)
+          this.$router.push({ path: '/joinAuth' })
+        })
         .catch((error) => console.log(error))
+    },
+    checkIdDup() {
+      if (this.validity.id === false) {
+        alert('아이디를 다시 확인해주세요!')
+      } else {
+        const data = { email: this.id }
+        axios
+          .post('/api/member/checkIdDup', data)
+          .then((response) => {
+            console.log(response.data.result)
+            const result = response.data.result
+            if (result === 'SUCCESS') {
+              this.validity.checkIdDuplicate = true
+              this.idDupBtnStr = '확인완료'
+              this.idDupBtnActive = true
+              this.checkTotalJoinValidity()
+            } else {
+              this.validity.checkIdDuplicate = false
+              this.checkTotalJoinValidity()
+              alert('이미 사용중인 아이디입니다')
+            }
+          })
+          .catch((error) => console.log(error))
+      }
+    },
+    checkNickDup() {
+      if (this.validity.nick === false) {
+        alert('닉네임을 다시 확인해주세요!')
+      } else {
+        const data = { nick: this.nick }
+        axios
+          .post('/api/member/checkNickDup', data)
+          .then((response) => {
+            console.log(response.data.result)
+            const result = response.data.result
+            if (result === 'SUCCESS') {
+              this.validity.checkNickDuplicate = true
+              this.nickDupBtnStr = '확인완료'
+              this.nickDupBtnActive = true
+              this.checkTotalJoinValidity()
+            } else {
+              this.validity.checkNickDuplicate = false
+              this.checkTotalJoinValidity()
+              alert('이미 사용중인 닉네임입니다')
+            }
+          })
+          .catch((error) => console.log(error))
+      }
     }
   }
 }
@@ -296,10 +424,9 @@ input[type='password'] {
   border-radius: 0;
   padding: 0;
   overflow: visible;
-  cursor: pointer;
   height: 48px;
   border-radius: 4px;
-  background-color: var(--main-color);
+  background-color: rgb(138, 138, 138);
   color: #ffffff;
   margin-top: 20px;
 }
@@ -345,5 +472,33 @@ label[for='joinAgree-check'] {
 }
 .gray {
   color: #929292;
+}
+.join-btn-active {
+  background-color: var(--main-color) !important;
+  cursor: pointer;
+}
+.duplicate-btn {
+  width: 60px;
+  height: 26px;
+  background-color: white;
+  border: 1px solid var(--btn);
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  font-size: 13px;
+  color: var(--btn);
+  cursor: pointer;
+}
+
+.idDupBtnActive {
+  color: gray !important;
+  border: 1px solid rgb(172, 172, 172);
+  cursor: default;
+}
+
+.nickDupBtnActive {
+  color: gray !important;
+  border: 1px solid rgb(182, 182, 182);
+  cursor: default;
 }
 </style>

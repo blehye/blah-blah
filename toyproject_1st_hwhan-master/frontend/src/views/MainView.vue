@@ -33,7 +33,9 @@ export default {
     }
   },
   setup() {},
-  created() {},
+  created() {
+
+  },
   mounted() {},
   unmounted() {},
   methods: {}

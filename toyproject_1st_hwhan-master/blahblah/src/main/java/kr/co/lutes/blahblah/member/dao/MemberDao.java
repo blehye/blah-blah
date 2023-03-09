@@ -9,5 +9,10 @@ public interface MemberDao {
     public List<MemberVo> getMemberList();
 
     public int insertMemberOne(MemberVo vo);
+    public MemberVo loginMember(MemberVo vo);
+
+    public List<MemberVo> selectMemberByEmail(String email);
+    public List<MemberVo> selectMemberByNick(String nick);
     
+    public int updateEmailAuth(String email);
 }

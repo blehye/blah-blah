@@ -9,6 +9,8 @@ public class ResMsg {
     private String msg;
     private Status result;
 
+    private MemberVo loginMember;
+
     public enum Status {
         ERROR, SUCCESS
     }

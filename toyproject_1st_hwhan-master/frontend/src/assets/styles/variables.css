@@ -1,5 +1,7 @@
 :root {
-  --main-color: #007ff7;
-  --box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 12px;
-  --border: #d2d2d2;
-}
+    --main-color: #007ff7;
+    --dark-blue: #010250;
+    --btn: #6861cf;
+    --box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 12px;
+    --border: #d2d2d2;
+  }

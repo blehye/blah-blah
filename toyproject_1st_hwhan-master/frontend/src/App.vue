@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <Header></Header>
-    <router-view />
+    <Header @openLoginModal="openLoginModal"></Header>
+    <router-view/>
     <Footer></Footer>
   </div>
 </template>
@@ -20,10 +20,16 @@ export default {
     }
   },
   setup() {},
-  created() {},
+  created() {
+
+  },
   mounted() {},
   unmounted() {},
-  methods: {}
+  methods: {
+    openLoginModal() {
+      console.log('open login modal')
+    }
+  }
 }
 </script>
 
@@ -37,7 +43,9 @@ div,
 span {
   font-family: 'Noto Sans KR', sans-serif;
 }
+
 #app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

@@ -2,7 +2,10 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import MainView from '../views/MainView.vue'
 import JoinView from '../views/JoinView.vue'
-import TopicView from '../views/TopicView.vue'
+import JoinAuthView from '../views/JoinAuthView.vue'
+import EmailAuthView from '../views/EmailAuthView.vue'
+import BoardView from '../views/BoardView.vue'
+import BoardWriteView from '../views/BoardWriteView.vue'
 
 Vue.use(VueRouter)
 
@@ -18,9 +21,24 @@ const routes = [
     component: JoinView
   },
   {
-    path: '/topic',
-    name: 'TopicView',
-    component: TopicView
+    path: '/joinAuth',
+    name: 'JoinAuthView',
+    component: JoinAuthView
+  },
+  {
+    path: '/emailAuth/:random/:email',
+    name: 'EmailAuthView',
+    component: EmailAuthView
+  },
+  {
+    path: '/board',
+    name: 'BoardView',
+    component: BoardView
+  },
+  {
+    path: '/board/write',
+    name: 'BoardWriteView',
+    component: BoardWriteView
   }
 
 ]
