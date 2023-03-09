@@ -36,17 +36,17 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public int join(MemberVo vo) throws Exception{
 
-        // Random random = new Random();
-        // int craeteNum = 0;
-        // String ranNom = "";
-        // int letter = 6;
-        // String resultNum = "";
+        Random random = new Random();
+        int createNum = 0;
+        String ranNum = "";
+        int letter = 6;
+        String resultNum = "";
 
-        // for(int i=0; i<letter; i++) {
-        //     createNum = random.nextInt(9);
-        //     ranNum = Integer.toString(createNum);
-        //     resultNum += random;
-        // }
+        for(int i=0; i<letter; i++) {
+            createNum = random.nextInt(9);
+            ranNum = Integer.toString(createNum);
+            resultNum += ranNum;
+        }
 
         MailHandler sendMail = new MailHandler(mailSender);
 		sendMail.setSubject("[BlahBlah]회원가입 인증 메일입니다.");
@@ -54,7 +54,7 @@ public class MemberServiceImpl implements MemberService{
 				"<h2>BlahBlah 메일 인증</h2>"
 				+"<br>BlahBlah에 가입 하신걸 환영합니다."
 				+"<br>아래의 '회원가입'을 눌러주세요"
-				+"<br><a href='http://localhost:3000/emailAuth/1/" + vo.getEmail()+"/'>회원가입</a>"
+				+"<br><a href='http://localhost:3000/emailAuth/" + resultNum + "/" + vo.getEmail()+"/'>회원가입</a>"
 				);
 		sendMail.setFrom("lutesBlahBlah@gmail.com", "BlahBlah");
 		sendMail.setTo(vo.getEmail());
