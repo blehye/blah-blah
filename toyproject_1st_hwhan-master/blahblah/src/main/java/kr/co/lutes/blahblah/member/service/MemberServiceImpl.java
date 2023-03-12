@@ -36,6 +36,18 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public int join(MemberVo vo) throws Exception{
 
+        /*
+         * 회원가입
+         * 
+         * 1. 랜덤 넘버 6자리 생성
+         * 2. 인증 메일 전송
+         * 3. 비밀번호 암호화 (SHA256)
+         * 4. 가입날짜 setEnrollDate()
+         * 5. 전화번호 암호화
+         * 6. 생년월일 암호화
+         */
+
+        //랜덤 넘버 6자리 생성
         Random random = new Random();
         int createNum = 0;
         String ranNum = "";
@@ -48,6 +60,7 @@ public class MemberServiceImpl implements MemberService{
             resultNum += ranNum;
         }
 
+        //인증 메일 전송
         MailHandler sendMail = new MailHandler(mailSender);
 		sendMail.setSubject("[BlahBlah]회원가입 인증 메일입니다.");
 		sendMail.setText(
@@ -60,17 +73,24 @@ public class MemberServiceImpl implements MemberService{
 		sendMail.setTo(vo.getEmail());
 		sendMail.send();
 
+        //비밀번호 암호화 (SHA256)
+        SHA256 sha256 = new SHA256();
+        
+        vo.setPwd(sha256.encrypt(vo.getPwd()));
+        vo.setQuitYn("N");
+        vo.setEmailAuth("0");
+
+        //전화번호 암호화 (SHA256) -> 2차 때 양방향으로 변경 예정
+        vo.setPhone(sha256.encrypt(vo.getPhone()));
+
+        //생년월일 암호화 (SHA256) -> 2차 때 양방향으로 변경 예정
+        vo.setBirth(sha256.encrypt(vo.getBirth()));
+
         // 현재 날짜/시간
         LocalDateTime now = LocalDateTime.now();
  
         // 포맷팅
         // String formatedNow = now.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
-
-        SHA256 sha256 = new SHA256();
-
-        vo.setPwd(sha256.encrypt(vo.getPwd()));
-        vo.setQuitYn("N");
-        vo.setEmailAuth("0");
         vo.setEnrollDate( java.sql.Timestamp.valueOf(now));
         return memberDao.insertMemberOne(vo);
     }

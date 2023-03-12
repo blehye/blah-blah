@@ -26,7 +26,7 @@
           </div>
           <div v-else>
             <div class="login-state-btns">
-              <router-link to="/board/write">
+              <router-link to="/b/write">
                 <input type="button" value="글쓰기" class="writeBtn" />
               </router-link>
               <router-link to="/mypage">
@@ -121,6 +121,9 @@ export default {
   color: white;
   font-size: 15px;
   cursor: pointer;
+}
+.writeBtn:hover {
+  background-color: var(--main-color-hover);
 }
 .login-state-btns {
   display: flex;

@@ -13,11 +13,17 @@ import lombok.ToString;
 @ToString
 public class MemberVo {
 
+    /*
+     * collection : hwhan.member
+     */
+
     private ObjectId id;
+    private String name;
     private String email;
     private String pwd;
     private String phone;
     private String nick;
+    private String birth;
     private Date enrollDate;
     private String quitYn;
     private String emailAuth;

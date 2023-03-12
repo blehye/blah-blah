@@ -1,38 +1,58 @@
 <template>
-    <div class="container">
-      <!-- <nav>
-        <router-link to="/topic/blahblah"></router-link>
-        <router-link to="/topic/hobby"></router-link>
-        <router-link to="/topic/trip"></router-link>
-      </nav>
-      <router-view/> -->
-      <BoardOne></BoardOne>
-      <BoardOne></BoardOne>
-      <BoardOne></BoardOne>
-      <BoardOne></BoardOne>
-    </div>
+  <div class="container">
+    <Category @filterCategory="filter"></Category>
+    <section class="board-section">
+      <BoardOne
+        :cate="category"
+        v-for="(board, i) in boardList"
+        :key="i"
+        :board="board"
+      ></BoardOne>
+    </section>
+  </div>
 </template>
 <script>
+import axios from 'axios'
+import Category from '../components/Category.vue'
 import BoardOne from '../components/BoardOne.vue'
 export default {
-  components: {
-    BoardOne
-  },
+  components: { Category, BoardOne },
   data() {
     return {
-      sampleData: ''
+      categoryList: [],
+      category: '',
+      boardList: []
     }
   },
   setup() {},
-  created() {},
+  created() {
+    const category = this.$route.params.category
+    this.category = category
+    console.log(this.category)
+    axios
+      .post('/api/board/list/get', this.category)
+      .then((response) => {
+        this.boardList = response.data
+      })
+      .catch((error) => console.log(error))
+  },
   mounted() {},
   unmounted() {},
-  methods: {}
+  methods: {
+    filter(categoryKey) {
+      this.category = categoryKey
+      axios
+        .post('/api/board/list/get', this.category)
+        .then((response) => {
+          this.boardList = response.data
+        })
+        .catch((error) => console.log(error))
+    }
+  }
 }
 </script>
 <style scoped>
-.container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.board-section {
+  margin-bottom: 150px;
 }
 </style>

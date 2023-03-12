@@ -2,13 +2,22 @@
   <div class="container">
     <div class="write-container">
       <section class="title-container">
-        <select name="" id="" class="category">
+        <select name="" id="" class="category" v-model="category">
           <option value="">카테고리를 선택하세요</option>
-          <option value="">카테고리1</option>
-          <option value="">카테고리2</option>
-          <option value="">카테고리3</option>
+          <option
+            :value="category.key"
+            :key="category.key"
+            v-for="category in categoryList"
+          >
+            {{ category.name }}
+          </option>
         </select>
-        <input type="text" placeholder="제목을 입력하세요" class="title" />
+        <input
+          type="text"
+          placeholder="제목을 입력하세요"
+          class="title"
+          v-model="title"
+        />
       </section>
       <section class="content-container">
         <textarea
@@ -18,46 +27,112 @@
           rows="10"
           placeholder="내용을 입력하세요"
           class="content"
+          spellcheck="false"
+          v-model="content"
         ></textarea>
       </section>
-      <section class="file-container" v-html="fileTag"></section>
+      <section class="file-container">
+        <input
+          type="file"
+          class="file-btn"
+          style="margin-bottom: 10px; width: 300px"
+          @change="addImage($event)"
+          v-for="(file, i) in fileCnt"
+          :key="i"
+        />
+      </section>
       <section class="file-add-btn-container">
         <input
           type="button"
           class="addBtn"
           value="파일 추가하기"
-          @click="addFile(event)"
+          @click="addFile()"
         />
       </section>
       <section class="enroll-btn-container">
-        <input type="button" value="등록" class="enroll-btn" />
+        <input
+          type="button"
+          value="등록"
+          class="enroll-btn"
+          @click="writeBoardOne"
+        />
       </section>
     </div>
   </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
   components: {},
   data() {
     return {
-      fileCnt: 1,
-      fileTag:
-        '<input type="file" name="" id="" class="file-btn" style="margin-bottom: 10px; width:300px;">'
+      title: '',
+      content: '',
+      category: '',
+      image: [],
+      categoryList: [],
+      setting: {},
+      event: '',
+      fileCnt: 1
     }
   },
   setup() {},
-  created() {},
+  created() {
+    this.fileCnt = 1
+    axios
+      .post('/api/board/category/get')
+      .then((response) => {
+        // console.log(response.data)
+        this.categoryList = response.data
+      })
+      .catch((error) => console.log(error))
+
+    axios
+      .post('/api/board/setting/get')
+      .then((response) => {
+        // console.log(response.data)
+        this.setting = response.data
+      })
+      .catch((error) => console.log(error))
+  },
   mounted() {},
   unmounted() {},
   methods: {
     addFile(event) {
-      if (this.fileCnt === 5) {
-        alert('파일은 5개까지 첨부 가능합니다')
+      if (this.fileCnt === parseInt(this.setting.maxImg)) {
+        alert(`파일은 ${this.setting.maxImg}개까지 첨부 가능합니다`)
         event.preventDefault()
       }
-      this.fileTag +=
-        '<input type="file" name="" id="" class="file-btn" style="margin-bottom: 10px; width:300px;">'
       this.fileCnt += 1
+    },
+    writeBoardOne() {
+      const formData = new FormData()
+      formData.append('category', this.category)
+      formData.append('title', this.title)
+      formData.append('content', this.content)
+
+      for (let i = 0; i < this.image.length; i++) {
+        formData.append('image', this.image[i])
+      }
+      axios({
+        method: 'post',
+        url: '/api/board/add',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        data: formData
+      })
+        .then((response) => {
+          console.log(response.data)
+          this.setting = response.data
+          this.$router.push({ path: '/' })
+          alert('게시글 작성이 완료되었습니다')
+        })
+        .catch((error) => console.log(error))
+    },
+    addImage(event) {
+      console.log(event.target.files[0])
+      this.image.push(event.target.files[0])
     }
   }
 }
@@ -94,14 +169,12 @@ export default {
   padding: 0px 20px;
   font-size: 15px;
 }
-
 .title:focus,
 .content:focus,
 .category:focus {
   outline: 1px solid rgb(201, 227, 255);
   border: none;
 }
-
 .content {
   width: 100%;
   margin: 10px 0px;
@@ -112,7 +185,6 @@ export default {
   resize: none;
   height: 400px;
 }
-
 .file-container {
   display: flex;
   flex-direction: column;
@@ -123,7 +195,6 @@ export default {
 .file-btn {
   margin-bottom: 10px;
 }
-
 .file-add-btn-container {
   display: flex;
 }
@@ -141,6 +212,6 @@ export default {
   cursor: pointer;
 }
 .enroll-btn:hover {
-  background-color: rgb(17, 84, 192);
+  background-color: var(--main-color-hover);
 }
 </style>

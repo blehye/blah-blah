@@ -7,6 +7,15 @@
           <div class="content">모두가 생각을 나눌수 있도록</div>
         </div>
 
+        <div id="name">
+          <div class="text">이름</div>
+          <div class="relative">
+            <input type="text" name="name" v-model="name" required  @blur="checkNameValidity"/>
+          </div>
+
+          <div id="nameResult" class="result">{{ nameResult }}</div>
+        </div>
+
         <div id="id">
           <div class="text">이메일</div>
           <div class="relative">
@@ -14,7 +23,7 @@
             <input type="button" :value="idDupBtnStr" class="duplicate-btn" @click="checkIdDup" :class="{idDupBtnActive : idDupBtnActive}" :disabled="validity.checkIdDuplicate == true">
           </div>
 
-          <div id="idResult" class="result">{{ idResult }}</div>
+          <div id="nameResult" class="result">{{ idResult }}</div>
         </div>
 
         <div id="pwd">
@@ -69,7 +78,7 @@
               placeholder="영문,숫자,한글로 2자 이상 8자 이하"
               v-model="nick"
               required
-              @keyup="checkNickValidity"
+              @blur="checkNickValidity"
               :readonly="validity.checkNickDuplicate == true"
             />
             <input type="button" :value="nickDupBtnStr" class="duplicate-btn" @click="checkNickDup" :class="{nickDupBtnActive: nickDupBtnActive}" :disabled="validity.checkNickDuplicate == true">
@@ -89,6 +98,18 @@
           />
           <div id="phoneResult" class="result">{{ phoneResult }}</div>
         </div>
+        <div id="birth">
+          <div class="text">생년월일</div>
+          <input
+            type="text"
+            name="birth"
+            placeholder="YYYYMMDD"
+            v-model="birth"
+            required
+            @keyup="checkBirthValidity"
+          />
+          <div id="birthResult" class="result">{{ birthResult }}</div>
+        </div>
 
         <input @click="join(event)" type="button" id="join-btn" value="회원가입" :class="{'join-btn-active': joinActive}"/>
       </div>
@@ -101,30 +122,36 @@ export default {
   components: {},
   data() {
     return {
+      name: '',
       id: '',
       pwd: '',
       pwd2: '',
       phone: '',
       nick: '',
+      birth: '',
       pwdType: 'password',
       pwdActive: false,
       pwdActiveIcon: 'visibility_off',
       pwdType2: 'password',
       pwdActive2: false,
       pwdActiveIcon2: 'visibility_off',
+      nameResult: '',
       idResult: '',
       pwdResult: '',
       pwdResult2: '',
       nickResult: '',
       phoneResult: '',
+      birthResult: '',
       joinActive: false,
 
       validity: {
+        name: false,
         id: false,
         pwd: false,
         pwd2: false,
         nick: false,
         phone: false,
+        birth: false,
         checkIdDuplicate: false,
         checkNickDuplicate: false
       },
@@ -142,6 +169,10 @@ export default {
   mounted() {},
   unmounted() {},
   methods: {
+    checkNameValidity() {
+      this.checkName()
+      this.checkTotalJoinValidity()
+    },
     checkIdValidity() {
       this.checkId()
       this.checkTotalJoinValidity()
@@ -161,6 +192,29 @@ export default {
     checkPhoneValidity() {
       this.checkPhone()
       this.checkTotalJoinValidity()
+    },
+    checkBirthValidity() {
+      this.checkBirth()
+      this.checkTotalJoinValidity()
+    },
+    checkName() {
+      // 이름은 한글 영문만, 2자 이상
+      const nameCheck = /^[가-힣a-zA-Z]{2,}$/
+      // 공백 체크
+      const spaceCheck = /\s/
+
+      this.validity.name = false
+      if (this.name === '') {
+        this.nameResult = '이름을 입력해주세요'
+      } else if (this.name.search(spaceCheck) !== -1) {
+        this.nameResult = '공백없이 작성해주세요'
+      } else if (!nameCheck.test(this.name)) {
+        console.log('현재이름' + this.name)
+        this.nameResult = '이름을 정확히 입력해주세요'
+      } else {
+        this.nameResult = ''
+        this.validity.name = true
+      }
     },
     checkId() {
       // 이메일 형식이 (알파벳,숫자,-,_,.)@lutes.co.kr
@@ -249,6 +303,24 @@ export default {
         this.validity.phone = true
       }
     },
+    checkBirth() {
+      // 생년월일 체크
+      const birthCheck = /^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/
+      // 공백 체크
+      const spaceCheck = /\s/
+
+      this.validity.birth = false
+      if (this.birth === '') {
+        this.birthResult = '생년월일을 입력해주세요'
+      } else if (this.birth.search(spaceCheck) !== -1) {
+        this.birthCheck = '공백없이 작성해주세요'
+      } else if (!birthCheck.test(this.birth)) {
+        this.birthResult = '생년월일을 다시 확인해주세요'
+      } else {
+        this.birthResult = ''
+        this.validity.birth = true
+      }
+    },
     togglePwd() {
       this.pwdActive = !this.pwdActive
       if (this.pwdActive) {
@@ -270,14 +342,14 @@ export default {
       }
     },
     checkTotalJoinValidity() {
-      if (this.validity.id && this.validity.pwd && this.validity.pwd2 && this.validity.nick && this.validity.phone && this.validity.checkIdDuplicate && this.validity.checkNickDuplicate) {
+      if (this.validity.name && this.validity.id && this.validity.pwd && this.validity.pwd2 && this.validity.nick && this.validity.phone && this.validity.birth && this.validity.checkIdDuplicate && this.validity.checkNickDuplicate) {
         this.joinActive = true
       } else {
         this.joinActive = false
       }
     },
     join(event) {
-      if (!(this.validity.id && this.validity.pwd && this.validity.pwd2 && this.validity.nick && this.validity.phone)) {
+      if (!(this.validity.name && this.validity.id && this.validity.pwd && this.validity.pwd2 && this.validity.nick && this.validity.phone && this.validity.birth)) {
         alert('항목을 입력해주세요')
         event.preventDefault()
       }
@@ -289,17 +361,19 @@ export default {
         alert('닉네임 중복검사를 진행해주세요')
         event.preventDefault()
       }
-      if (!(this.validity.id && this.validity.pwd && this.validity.pwd2 && this.validity.nick && this.validity.phone && this.validity.checkIdDuplicate && this.validity.checkNickDuplicate)) {
+      if (!(this.validity.name && this.validity.id && this.validity.pwd && this.validity.pwd2 && this.validity.nick && this.validity.phone && this.validity.birth && this.validity.checkIdDuplicate && this.validity.checkNickDuplicate)) {
         event.preventDefault()
       }
       console.log('제출')
       this.joinActive = true
       const joinData = {}
+      joinData.name = this.name
       joinData.email = this.id
       joinData.pwd = this.pwd
       joinData.pwd2 = this.pwd2
       joinData.phone = this.phone
       joinData.nick = this.nick
+      joinData.birth = this.birth
       axios
         .post('/api/member/join', joinData)
         .then((response) => {

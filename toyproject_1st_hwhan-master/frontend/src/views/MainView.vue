@@ -1,27 +1,26 @@
 <template>
-    <div class="wrapper">
-      <div class="wrapper-left">
-        <search-box></search-box>
-        <article>
-          <BoardPreview></BoardPreview>
-          <BoardPreview></BoardPreview>
-          <BoardPreview></BoardPreview>
-          <BoardPreview></BoardPreview>
-          <BoardPreview></BoardPreview>
-          <BoardPreview></BoardPreview>
-        </article>
-      </div>
-      <div class="wrapper-right">
-        <div class="hot-topic"></div>
-        <div class="main-ad1"></div>
-        <div class="main-ad2"></div>
-      </div>
+  <div class="wrapper">
+    <div class="wrapper-left">
+      <search-box></search-box>
+      <article>
+        <BoardPreview
+          v-for="category in categoryList"
+          :key="category.key"
+          :category="category"
+        ></BoardPreview>
+      </article>
     </div>
+    <div class="wrapper-right">
+      <div class="hot-topic"></div>
+      <div class="main-ad1"></div>
+      <div class="main-ad2"></div>
+    </div>
+  </div>
 </template>
 <script>
 import SearchBox from '../components/SearchBox.vue'
 import BoardPreview from '../components/BoardPreview.vue'
-
+import axios from 'axios'
 export default {
   components: {
     SearchBox,
@@ -29,12 +28,18 @@ export default {
   },
   data() {
     return {
-      sampleData: ''
+      categoryList: []
     }
   },
   setup() {},
   created() {
-
+    axios
+      .post('/api/board/category/get')
+      .then((response) => {
+        console.log(response.data)
+        this.categoryList = response.data
+      })
+      .catch((error) => console.log(error))
   },
   mounted() {},
   unmounted() {},

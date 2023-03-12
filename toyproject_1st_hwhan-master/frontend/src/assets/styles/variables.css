@@ -1,5 +1,6 @@
 :root {
     --main-color: #007ff7;
+    --main-color-hover: rgb(17, 84, 192);
     --dark-blue: #010250;
     --btn: #6861cf;
     --box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 12px;

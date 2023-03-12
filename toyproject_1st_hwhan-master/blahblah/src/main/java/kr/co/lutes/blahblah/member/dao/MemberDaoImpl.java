@@ -20,13 +20,15 @@ public class MemberDaoImpl implements MemberDao{
     @Autowired
     private MongoDatabase mongoDB;
 
+    private final String COLL_NAME_MEMBER = "hwhan.member";
+
     public List<MemberVo> getMemberList() {
 
         MongoCollection<MemberVo> coll = null;
         List<MemberVo> li = new ArrayList<>();
 
         try {
-            coll =  mongoDB.getCollection("member", MemberVo.class);
+            coll =  mongoDB.getCollection(COLL_NAME_MEMBER, MemberVo.class);
             coll.find().into(li);
             System.out.println(li);
 
@@ -43,7 +45,7 @@ public class MemberDaoImpl implements MemberDao{
         MongoCollection<MemberVo> coll = null;
         int result = 0;
         try {
-            coll =  mongoDB.getCollection("member", MemberVo.class);
+            coll =  mongoDB.getCollection(COLL_NAME_MEMBER, MemberVo.class);
             coll.insertOne(vo);
             result = 1;
         } catch (Exception e) {
@@ -59,7 +61,7 @@ public class MemberDaoImpl implements MemberDao{
         List<MemberVo> li = new ArrayList<>();
 
         try {
-            coll =  mongoDB.getCollection("member", MemberVo.class);
+            coll =  mongoDB.getCollection(COLL_NAME_MEMBER, MemberVo.class);
             coll.find(Filters.eq("email", email)).into(li);
 
         } catch (Exception e) {
@@ -74,7 +76,7 @@ public class MemberDaoImpl implements MemberDao{
         List<MemberVo> li = new ArrayList<>();
 
         try {
-            coll =  mongoDB.getCollection("member", MemberVo.class);
+            coll =  mongoDB.getCollection(COLL_NAME_MEMBER, MemberVo.class);
             coll.find(Filters.eq("nick", nick)).into(li);
 
         } catch (Exception e) {
@@ -93,7 +95,7 @@ public class MemberDaoImpl implements MemberDao{
 
         try {
 
-            coll =  mongoDB.getCollection("member", MemberVo.class);
+            coll =  mongoDB.getCollection(COLL_NAME_MEMBER, MemberVo.class);
             filter.add(Filters.eq("email", vo.getEmail()));
             filter.add(Filters.eq("pwd", vo.getPwd()));
             filter.add(Filters.eq("quitYn", "N"));
@@ -115,7 +117,7 @@ public class MemberDaoImpl implements MemberDao{
         Bson update = Updates.set("emailAuth", "1");
         int result = 1;
         try {
-            coll =  mongoDB.getCollection("member", MemberVo.class);
+            coll =  mongoDB.getCollection(COLL_NAME_MEMBER, MemberVo.class);
             coll.updateOne(Filters.eq("email", email), update);
         } catch (Exception e) {
             e.printStackTrace();
