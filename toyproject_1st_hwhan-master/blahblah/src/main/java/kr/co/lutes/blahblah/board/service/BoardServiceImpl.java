@@ -3,8 +3,6 @@ package kr.co.lutes.blahblah.board.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

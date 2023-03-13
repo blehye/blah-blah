@@ -18,13 +18,14 @@ public class FileUploader {
         System.out.println("파일업로더 입장");
 
         String rootPath = System.getProperty("user.dir");
-        String fileDir = rootPath + "/blahblah/src/main/resources/static/upload/";
+        // String fileDir = rootPath + "/blahblah/src/main/resources/static/upload/";
+        String fileDir = rootPath + "/frontend/src/assets/upload/";
 
+        System.out.println("fileDir: "+fileDir);
         List<MultipartFile> fileList = vo.getImage();
         String changeName = null;
-        AttachmentVo aVo = new AttachmentVo();
         List<AttachmentVo> imageInfoList = new ArrayList<>();
-
+        
         for(int i=0; i<fileList.size(); i++) {
             
             String originName = fileList.get(i).getOriginalFilename();
@@ -36,6 +37,7 @@ public class FileUploader {
             File target = new File(fileDir + changeName);
             
             try {
+                AttachmentVo aVo = new AttachmentVo();
                 fileList.get(i).transferTo(target);
                 aVo.setOriginName(originName);
                 aVo.setChangeName(changeName);
