@@ -86,7 +86,6 @@ export default {
         this.categoryList = response.data
       })
       .catch((error) => console.log(error))
-
     axios
       .post('/api/board/setting/get')
       .then((response) => {
@@ -110,7 +109,6 @@ export default {
       formData.append('category', this.category)
       formData.append('title', this.title)
       formData.append('content', this.content)
-
       for (let i = 0; i < this.image.length; i++) {
         formData.append('image', this.image[i])
       }

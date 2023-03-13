@@ -1,16 +1,16 @@
 <template>
-  <section class="container">
-    <nav class="wrapper category-nav">
-      <router-link
-        :to="{ path: '/board/' + category.key }"
-        v-for="category in categoryList"
-        :key="category.key"
-        @click.native="filter(category.key)"
-        >{{ category.name }}</router-link
-      >
-    </nav>
-  </section>
-</template>
+    <section class="container">
+      <nav class="wrapper category-nav">
+        <router-link
+          :to="{ path: '/board/' + category.key }"
+          v-for="category in categoryList"
+          :key="category.key"
+          @click.native="filter(category.key)"
+          >{{ category.name }}</router-link
+        >
+      </nav>
+    </section>
+  </template>
 <script>
 import axios from 'axios'
 export default {
@@ -38,16 +38,16 @@ export default {
   }
 }
 </script>
-<style scoped>
-.container {
-  border-bottom: 1px solid var(--border);
-}
-.wrapper {
-  width: 1100px;
-  margin: 0 auto;
-}
-.category-nav {
-  display: flex;
-  justify-content: space-between;
-}
-</style>
+  <style scoped>
+  .container {
+    border-bottom: 1px solid var(--border);
+  }
+  .wrapper {
+    width: 1100px;
+    margin: 0 auto;
+  }
+  .category-nav {
+    display: flex;
+    justify-content: space-between;
+  }
+  </style>

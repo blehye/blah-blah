@@ -111,7 +111,7 @@
           <div id="birthResult" class="result">{{ birthResult }}</div>
         </div>
 
-        <input @click="join(event)" type="button" id="join-btn" value="회원가입" :class="{'join-btn-active': joinActive}"/>
+        <input @click="join($event)" type="button" id="join-btn" value="회원가입" :class="{'join-btn-active': joinActive}"/>
       </div>
     </form>
   </div>
@@ -143,7 +143,6 @@ export default {
       phoneResult: '',
       birthResult: '',
       joinActive: false,
-
       validity: {
         name: false,
         id: false,
@@ -159,7 +158,6 @@ export default {
       nickDupBtnStr: '중복체크',
       idDupBtnActive: false,
       nickDupBtnActive: false
-
     }
   },
   setup() {},
@@ -202,7 +200,6 @@ export default {
       const nameCheck = /^[가-힣a-zA-Z]{2,}$/
       // 공백 체크
       const spaceCheck = /\s/
-
       this.validity.name = false
       if (this.name === '') {
         this.nameResult = '이름을 입력해주세요'
@@ -223,7 +220,6 @@ export default {
         /^([0-9a-zA-Z_\.-]+)@lutes.co.kr$/
       // 공백 체크
       const spaceCheck = /\s/
-
       this.validity.id = false
       if (this.id === '') {
         this.idResult = '이메일을 입력해주세요'
@@ -272,7 +268,6 @@ export default {
       const nickCheck = /^[a-zA-Z0-9가-힣]{2,8}$/
       // 공백 체크
       const spaceCheck = /\s/
-
       this.validity.nick = false
       if (this.nick === '') {
         this.nickResult = '닉네임을 입력해주세요'
@@ -290,7 +285,6 @@ export default {
       const phoneCheck = /[0-9]{11}/g
       // 공백 체크
       const spaceCheck = /\s/
-
       this.validity.phone = false
       if (this.phone === '') {
         this.phoneResult = '전화번호를 입력해주세요'
@@ -308,7 +302,6 @@ export default {
       const birthCheck = /^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/
       // 공백 체크
       const spaceCheck = /\s/
-
       this.validity.birth = false
       if (this.birth === '') {
         this.birthResult = '생년월일을 입력해주세요'
@@ -374,9 +367,11 @@ export default {
       joinData.phone = this.phone
       joinData.nick = this.nick
       joinData.birth = this.birth
+
       axios
         .post('/api/member/join', joinData)
         .then((response) => {
+          console.log(response)
           console.log(response.data.result)
           this.$router.push({ path: '/joinAuth' })
         })
@@ -563,13 +558,11 @@ label[for='joinAgree-check'] {
   color: var(--btn);
   cursor: pointer;
 }
-
 .idDupBtnActive {
   color: gray !important;
   border: 1px solid rgb(172, 172, 172);
   cursor: default;
 }
-
 .nickDupBtnActive {
   color: gray !important;
   border: 1px solid rgb(182, 182, 182);

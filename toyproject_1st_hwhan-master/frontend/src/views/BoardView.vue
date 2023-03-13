@@ -32,6 +32,7 @@ export default {
     axios
       .post('/api/board/list/get', this.category)
       .then((response) => {
+        console.log(response.data)
         this.boardList = response.data
       })
       .catch((error) => console.log(error))

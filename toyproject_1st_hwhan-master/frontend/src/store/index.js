@@ -9,6 +9,7 @@ export default new Vuex.Store({
   ],
   state: {
     loginMember: {
+      _id: '',
       email: '',
       pwd: '',
       nick: '',
@@ -21,6 +22,7 @@ export default new Vuex.Store({
   },
   mutations: {
     login(state, payload) {
+      state.loginMember.id = payload._id
       state.loginMember.email = payload.email
       state.loginMember.pwd = payload.pwd
       state.loginMember.phone = payload.phone

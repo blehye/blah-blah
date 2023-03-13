@@ -102,7 +102,7 @@ public class MemberDaoImpl implements MemberDao{
             filter.add(Filters.eq("emailAuth", "1"));
             
           
-            loginMember = coll.find(  Filters.and(filter)).first();
+            loginMember = coll.find(Filters.and(filter)).first();
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -92,6 +92,10 @@ public class MemberServiceImpl implements MemberService{
         // 포맷팅
         // String formatedNow = now.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
         vo.setEnrollDate( java.sql.Timestamp.valueOf(now));
+
+        // 가입 시 일반 사용자로 가입
+        vo.setStatus("A");
+
         return memberDao.insertMemberOne(vo);
     }
 

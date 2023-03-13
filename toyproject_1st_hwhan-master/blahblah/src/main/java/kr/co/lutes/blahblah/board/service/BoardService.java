@@ -15,5 +15,10 @@ public interface BoardService {
     public int writeBoardOne(BoardVo vo);
 
     public List<BoardSelectVo> getBoardListByCategory(String category);
+    BoardSelectVo getBoardOneById(String id);
+
+    public int deleteBoardOneById(String id);
+
+    public String getCategoryOneByKey(String key);
     
 }

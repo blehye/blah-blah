@@ -2,6 +2,8 @@ package kr.co.lutes.blahblah.member.controller;
 
 import java.net.URLDecoder;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +29,7 @@ public class MemberController {
 
     @PostMapping("/join")
     public ResMsg join(@RequestBody MemberVo vo) throws Exception{
+        System.out.println("회원가입 컨트롤러");
         ResMsg res = new ResMsg();
 
         int result = memberService.join(vo);
@@ -65,7 +68,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResMsg login(@RequestBody MemberVo vo) {
+    public ResMsg login(@RequestBody MemberVo vo, HttpSession session) {
         ResMsg res = new ResMsg();
         System.out.println("로그인 컨트롤러");
         try {
@@ -73,6 +76,7 @@ public class MemberController {
             System.out.println(loginMember);
             
             if (loginMember != null) {
+                session.setAttribute("loginMember", loginMember);
                 res.setLoginMember(loginMember);
                 res.setResult(Status.SUCCESS);
             } else {
@@ -84,6 +88,14 @@ public class MemberController {
         }
 
         return res;
+    }
+
+    @PostMapping("/logout")
+    public String login(HttpSession session) {
+        session.invalidate();
+        System.out.println("로그아웃 컨트롤러");
+
+        return "";
     }
 
     @PostMapping("/emailAuth")

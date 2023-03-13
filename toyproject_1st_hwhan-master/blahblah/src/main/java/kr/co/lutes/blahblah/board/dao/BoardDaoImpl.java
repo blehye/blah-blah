@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 
 import kr.co.lutes.blahblah.board.vo.BoardSelectVo;
 import kr.co.lutes.blahblah.board.vo.BoardVo;
@@ -43,6 +45,26 @@ public class BoardDaoImpl implements BoardDao{
         }
 
         return li;
+    }
+
+    @Override
+    public String getCategoryOneByKey(String key) {
+        MongoCollection<CategoryVo> coll = null;
+
+        CategoryVo vo = new CategoryVo();
+
+        List<Bson> filter = new ArrayList<>();
+        filter.add(Filters.eq("key", key));
+        try {
+            coll =  mongoDB.getCollection(COLL_NAME_CATEGORY, CategoryVo.class);
+            vo = coll.find(Filters.and(filter)).first();
+            System.out.println(vo);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return vo.getName();
     }
 
     @Override
@@ -84,6 +106,8 @@ public class BoardDaoImpl implements BoardDao{
 
         List<Bson> filter = new ArrayList<>();
         filter.add(Filters.eq("category", category));
+        filter.add(Filters.eq("deleteYn", "N"));
+
 
         try {
             System.out.println(category);
@@ -97,5 +121,61 @@ public class BoardDaoImpl implements BoardDao{
 
         return li;
     }
+
+    @Override
+    public BoardSelectVo getBoardOneById(String id) {
+        MongoCollection<BoardSelectVo> coll = null;
+        BoardSelectVo board = new BoardSelectVo();
+
+        System.out.println("게시글 한개 조회 dao");
+        System.out.println(id);
+        List<Bson> filter = new ArrayList<>();
+        filter.add(Filters.eq("_id", new ObjectId(id)));
+
+        try {
+            coll =  mongoDB.getCollection(COLL_NAME_BOARD, BoardSelectVo.class);
+            board = coll.find(Filters.and(filter)).first();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return board;
+    }
+
+    @Override
+    public int updateHit(String id) {
+        System.out.println("조회수 1 증가 dao");
+    
+        MongoCollection<BoardSelectVo> coll = null;
+        Bson update = Updates.inc("hit", 1);
+        int result = 0;
+        try {
+            coll =  mongoDB.getCollection(COLL_NAME_BOARD, BoardSelectVo.class);
+            coll.updateOne(Filters.eq("_id", new ObjectId(id)), update);
+            result = 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("조회수결과"+result);
+        return result;
+    }
+
+    @Override
+    public int deleteBoardOneById(String id) {
+        System.out.println("게시글 삭제 dao");
+    
+        MongoCollection<BoardSelectVo> coll = null;
+        Bson update = Updates.set("deleteYn", "Y");
+        int result = 1;
+        try {
+            coll =  mongoDB.getCollection(COLL_NAME_BOARD, BoardSelectVo.class);
+            coll.updateOne(Filters.eq("_id", new ObjectId(id)), update);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     
 }

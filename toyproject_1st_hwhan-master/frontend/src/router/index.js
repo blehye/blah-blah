@@ -6,8 +6,8 @@ import JoinAuthView from '../views/JoinAuthView.vue'
 import EmailAuthView from '../views/EmailAuthView.vue'
 import BoardView from '../views/BoardView.vue'
 import BoardDetailView from '../views/BoardDetailView.vue'
+import BoardEditView from '../views/BoardEditView.vue'
 import BoardWriteView from '../views/BoardWriteView.vue'
-import TestView from '../views/TestView.vue'
 
 Vue.use(VueRouter)
 
@@ -38,20 +38,21 @@ const routes = [
     component: BoardView
   },
   {
-    path: '/board/detail/:category',
+    path: '/b/detail/:id',
     name: 'BoardDetailView',
     component: BoardDetailView
+  },
+  {
+    path: '/b/edit/:id',
+    name: 'BoardEditView',
+    component: BoardEditView
   },
   {
     path: '/b/write',
     name: 'BoardWriteView',
     component: BoardWriteView
-  },
-  {
-    path: '/test/:category',
-    name: 'TestView',
-    component: TestView
   }
+
 ]
 
 const router = new VueRouter({

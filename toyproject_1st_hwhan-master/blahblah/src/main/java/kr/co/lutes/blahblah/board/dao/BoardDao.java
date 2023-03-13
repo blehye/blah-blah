@@ -15,4 +15,12 @@ public interface BoardDao {
     public int insertBoardOne(BoardVo vo);
 
     public List<BoardSelectVo> getBoardListByCategory(String category);
+
+    public BoardSelectVo getBoardOneById(String id);
+
+    public int deleteBoardOneById(String id);
+
+    public int updateHit(String id);
+
+    public String getCategoryOneByKey(String key);
 }

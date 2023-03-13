@@ -44,6 +44,7 @@
   </div>
 </template>
 <script>
+import axios from 'axios'
 import LoginModal from '../components/LoginModal.vue'
 export default {
   components: { LoginModal },
@@ -64,6 +65,11 @@ export default {
       this.isActive = false
     },
     logout() {
+      axios.post('/api/member/logout')
+        .then(response => {
+          console.log(response)
+        })
+        .catch((error) => console.log(error))
       this.$store.commit('logout')
       this.$router.push({ path: '/' })
     }

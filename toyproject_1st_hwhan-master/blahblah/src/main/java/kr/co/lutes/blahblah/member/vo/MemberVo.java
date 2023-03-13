@@ -27,5 +27,6 @@ public class MemberVo {
     private Date enrollDate;
     private String quitYn;
     private String emailAuth;
+    private String status;
     
 }
