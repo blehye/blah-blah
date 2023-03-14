@@ -65,8 +65,9 @@ export default {
       this.isActive = false
     },
     logout() {
-      axios.post('/api/member/logout')
-        .then(response => {
+      axios
+        .post('/api/member/logout')
+        .then((response) => {
           console.log(response)
         })
         .catch((error) => console.log(error))
@@ -130,6 +131,20 @@ export default {
 }
 .writeBtn:hover {
   background-color: var(--main-color-hover);
+}
+.jsonBtn {
+  border: none;
+  width: 74px;
+  height: 35px;
+  font-size: 20px;
+  background-color: rgb(104, 195, 255);
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+.jsonBtn:hover {
+  background-color: rgb(56, 167, 241);
 }
 .login-state-btns {
   display: flex;

@@ -60,11 +60,11 @@
       <p align="left">
         {{ this.board.content }}
       </p>
-      <div class="upload-container">
+      <div class="upload-container" v-if="board.imageInfoList">
         <div
           v-for="(item, i) in board.imageInfoList"
           :key="i"
-          @click="download(item.changeName)"
+          @click="download(item.changeName, item.originName)"
           class="cursor"
         >
           <span>{{ item.originName }}</span>
@@ -91,24 +91,19 @@ export default {
     dateFormat(value) {
       // 들어오는 value 값이 공백이면 그냥 공백으로 돌려줌
       if (value === '') return ''
-
       // 현재 Date 혹은 DateTime 데이터를 javaScript date 타입화
       const date = new Date(value)
-
       // 연도, 월, 일 추출
       const year = date.getFullYear()
       let month = date.getMonth() + 1
       let day = date.getDate()
-
       // 월, 일의 경우 한자리 수 값이 있기 때문에 공백에 0 처리
       if (month < 10) {
         month = '0' + month
       }
-
       if (day < 10) {
         day = '0' + day
       }
-
       // 최종 포맷 (ex - '2021-10-08')
       return year + '-' + month + '-' + day
     }
@@ -116,7 +111,6 @@ export default {
   setup() {},
   created() {
     this.id = this.$route.params.id
-
     axios
       .post('/api/board/one/get', this.id)
       .then((response) => {
@@ -150,14 +144,32 @@ export default {
         }
       })
     },
-    download(changeName) {
+    download(changeName, originName) {
       axios({
-        url: '/api/board/download' + changeName, // 파일 다운로드 요청 URL
-        method: 'GET', // 혹은 'POST'
+        url: '/api/b/download/' + changeName + '/' + originName, // 파일 다운로드 요청 URL
+        method: 'POST', // 혹은 'POST'
         responseType: 'blob' // 응답 데이터 타입 정의
       })
-        .then((response) => {
-          console.log(response.data)
+        .then((res) => {
+          console.log(res)
+          // header content-disposition에서 filename 추출.
+          const name = res.headers['content-disposition'].split('filename=')[1]
+
+          // IE11에서 blob처리 오류로 인해 분기처리
+          if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            const blob = res.data
+            window.navigator.msSaveOrOpenBlob(blob, name)
+          } else {
+            // IE 이외 다운로드 처리
+            const url = window.URL.createObjectURL(
+              new Blob([res.data], { type: res.headers['content-type'] })
+            )
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', name)
+            document.body.appendChild(link)
+            link.click()
+          }
         })
         .catch((error) => console.log(error))
     }
@@ -178,7 +190,6 @@ export default {
 .header-container {
   height: 170px;
   margin: 40px 0px;
-
   font-weight: 600;
   border-bottom: 1px solid rgb(236, 236, 236);
 }

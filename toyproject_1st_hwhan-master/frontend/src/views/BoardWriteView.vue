@@ -1,6 +1,26 @@
 <template>
   <div class="container">
     <div class="write-container">
+      <section class="btn-container">
+        <div class="flex">
+          <h1>신규 게시글 작성</h1>
+          <h2 @click="writeJson">파일로 게시글 작성</h2>
+        </div>
+        <div>
+          <input
+            type="button"
+            value="취소"
+            class="cancel-btn"
+            @click="cancel"
+          />
+          <input
+            type="button"
+            value="등록"
+            class="enroll-btn"
+            @click="writeBoardOne"
+          />
+        </div>
+      </section>
       <section class="title-container">
         <select name="" id="" class="category" v-model="category">
           <option value="">카테고리를 선택하세요</option>
@@ -47,14 +67,6 @@
           class="addBtn"
           value="파일 추가하기"
           @click="addFile()"
-        />
-      </section>
-      <section class="enroll-btn-container">
-        <input
-          type="button"
-          value="등록"
-          class="enroll-btn"
-          @click="writeBoardOne"
         />
       </section>
     </div>
@@ -131,18 +143,28 @@ export default {
     addImage(event) {
       console.log(event.target.files[0])
       this.image.push(event.target.files[0])
+    },
+    cancel() {
+      this.$router.go(-1)
+    },
+    writeJson() {
+      this.$router.push('/b/json/write')
     }
   }
 }
 </script>
 <style scoped>
+.flex {
+  display: flex;
+  align-items: flex-start;
+}
 .container {
   width: 1100px;
   margin: 0 auto;
 }
 .write-container {
   margin: 50px;
-  padding: 60px;
+  padding: 40px 60px 60px 60px;
   border: 1px solid rgb(234, 234, 234);
   border-radius: 20px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -196,18 +218,40 @@ export default {
 .file-add-btn-container {
   display: flex;
 }
-.enroll-btn-container {
+.btn-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
-.enroll-btn {
-  width: 60px;
-  height: 30px;
-  background-color: var(--main-color);
+.btn-container h1 {
+  font-size: 22px;
+  font-weight: 500;
+  margin-left: 5px;
+  margin-right: 10px;
+}
+.btn-container h2 {
+  font-size: 14px;
+  font-weight: 400;
+  border: 1px solid var(--border);
+  color: gray;
+  padding: 5px;
+  cursor: pointer;
+}
+.enroll-btn,
+.cancel-btn {
+  width: 65px;
+  height: 35px;
   color: white;
   border: none;
   font-size: 15px;
   cursor: pointer;
+  margin-left: 5px;
+}
+.enroll-btn {
+  background-color: var(--main-color);
+}
+.cancel-btn {
+  background-color: rgb(165, 165, 165);
 }
 .enroll-btn:hover {
   background-color: var(--main-color-hover);

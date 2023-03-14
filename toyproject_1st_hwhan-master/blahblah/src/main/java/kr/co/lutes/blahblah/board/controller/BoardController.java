@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.Gson;
 
 import kr.co.lutes.blahblah.board.service.BoardService;
+import kr.co.lutes.blahblah.board.vo.BoardJsonVo;
 import kr.co.lutes.blahblah.board.vo.BoardSelectVo;
 import kr.co.lutes.blahblah.board.vo.BoardVo;
 import kr.co.lutes.blahblah.board.vo.CategoryVo;
@@ -139,7 +140,7 @@ public class BoardController {
         System.out.println(str);
 
         Gson gson = new Gson();
-        BoardVo vo = gson.fromJson(str, BoardVo.class);
+        BoardJsonVo vo = gson.fromJson(str, BoardJsonVo.class);
         System.out.println(vo);
 
         // int result = boardService.writeBoardOne(vo);
