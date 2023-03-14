@@ -2,10 +2,10 @@ package kr.co.lutes.blahblah.board.vo;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.bson.types.ObjectId;
 
+import kr.co.lutes.blahblah.common.vo.AttachmentVo;
 import kr.co.lutes.blahblah.member.vo.MemberVo;
 import lombok.Data;
 
@@ -22,7 +22,7 @@ public class BoardSelectVo {
     private String categoryName;
     private String title;
     private String content;
-    private List<Map<String, String>> imageInfoList;
+    private List<AttachmentVo> imageInfoList;
     private MemberVo writer;
     private Date enrollDate;
     private Date modifyDate;

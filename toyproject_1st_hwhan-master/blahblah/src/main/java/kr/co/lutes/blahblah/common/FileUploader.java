@@ -18,14 +18,18 @@ public class FileUploader {
         System.out.println("파일업로더 입장");
 
         String rootPath = System.getProperty("user.dir");
-        // String fileDir = rootPath + "/blahblah/src/main/resources/static/upload/";
-        String fileDir = rootPath + "/frontend/src/assets/upload/";
+        String fileDir = rootPath + "/blahblah/src/main/resources/static/upload/";
+        //String fileDir = rootPath + "/frontend/src/assets/upload/";
 
         System.out.println("fileDir: "+fileDir);
         List<MultipartFile> fileList = vo.getImage();
         String changeName = null;
         List<AttachmentVo> imageInfoList = new ArrayList<>();
         
+        if(fileList == null) {
+            return null;
+        }
+
         for(int i=0; i<fileList.size(); i++) {
             
             String originName = fileList.get(i).getOriginalFilename();
@@ -33,7 +37,7 @@ public class FileUploader {
             String ext = originName.substring(originName.lastIndexOf("."), originName.length());
             // xxxxxxx.png (뒤에서부터 3자리. , 파일명 길이)
             
-            changeName = "image_" + System.nanoTime() + ext; // profile_현재시간
+            changeName = "upload_" + System.nanoTime() + ext; // upload_현재시간
             File target = new File(fileDir + changeName);
             
             try {

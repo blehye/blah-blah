@@ -1,6 +1,23 @@
 <template>
   <div class="container">
     <div class="write-container">
+      <section class="btn-container">
+        <h1>게시글 수정</h1>
+        <div>
+          <input
+            type="button"
+            value="취소"
+            class="cancel-btn"
+            @click="cancel"
+          />
+          <input
+            type="button"
+            value="수정"
+            class="enroll-btn"
+            @click="editBoardOne"
+          />
+        </div>
+      </section>
       <section class="title-container">
         <select name="" id="" class="category" v-model="board.category">
           <option value="">카테고리를 선택하세요</option>
@@ -34,17 +51,12 @@
       <section class="file-container">
         <section class="img-container">
           <div
-            v-for="(img, i) in board.imageInfoList"
-            :key="i"
+            v-for="item in fileList"
+            :key="item.chageName"
             class="img-info"
           >
-            <img
-              :src="require(`@/assets/upload/${img.changeName}`)"
-              alt="첨부이미지"
-              class="uploaded-img"
-            />
-            <div>{{ img.changeName }}</div>
-            <div class="delete-btn"><i class="fa-solid fa-x"></i></div>
+            <div>{{ item.originName }}</div>
+            <div class="delete-btn" @click="deleteFile(item.changeName)"><i class="fa-solid fa-x"></i></div>
           </div>
         </section>
         <input
@@ -64,14 +76,7 @@
           @click="addFile()"
         />
       </section>
-      <section class="enroll-btn-container">
-        <input
-          type="button"
-          value="등록"
-          class="enroll-btn"
-          @click="writeBoardOne"
-        />
-      </section>
+
     </div>
   </div>
 </template>
@@ -81,42 +86,45 @@ export default {
   components: {},
   data() {
     return {
+      id: '',
       board: {},
-      title: '',
-      content: '',
-      category: '',
+      // title: '',
+      // content: '',
+      // category: '',
       image: [],
       categoryList: [],
       setting: {},
-      event: '',
-      fileCnt: 1
+      originFileCnt: null,
+      fileCnt: 0,
+      fileList: []
     }
   },
   setup() {},
   created() {
     this.fileCnt = 0
+
     axios
       .post('/api/board/category/get')
       .then((response) => {
-        // console.log(response.data)
         this.categoryList = response.data
       })
       .catch((error) => console.log(error))
     axios
       .post('/api/board/setting/get')
       .then((response) => {
-        // console.log(response.data)
         this.setting = response.data
       })
       .catch((error) => console.log(error))
-
     this.id = this.$route.params.id
-
     axios
       .post('/api/board/one/get', this.id)
       .then((response) => {
+        console.log(this.id)
         this.board = response.data
-        console.log(this.board)
+        this.originFileCnt = response.data.imageInfoList.length
+        this.fileList = response.data.imageInfoList
+
+        console.log(this.fileList.length)
       })
       .catch((error) => console.log(error))
   },
@@ -124,23 +132,25 @@ export default {
   unmounted() {},
   methods: {
     addFile(event) {
-      if (this.fileCnt === parseInt(this.setting.maxImg)) {
+      if (this.fileCnt + this.originFileCnt === parseInt(this.setting.maxImg)) {
         alert(`파일은 ${this.setting.maxImg}개까지 첨부 가능합니다`)
         event.preventDefault()
       }
       this.fileCnt += 1
     },
-    writeBoardOne() {
+    editBoardOne() {
       const formData = new FormData()
-      formData.append('category', this.category)
-      formData.append('title', this.title)
-      formData.append('content', this.content)
+      formData.append('id', this.id)
+      formData.append('category', this.board.category)
+      formData.append('title', this.board.title)
+      formData.append('content', this.board.content)
+      formData.append('originFileList', JSON.stringify(this.fileList))
       for (let i = 0; i < this.image.length; i++) {
         formData.append('image', this.image[i])
       }
       axios({
         method: 'post',
-        url: '/api/board/add',
+        url: '/api/board/set',
         headers: {
           'Content-Type': 'multipart/form-data'
         },
@@ -149,14 +159,27 @@ export default {
         .then((response) => {
           console.log(response.data)
           this.setting = response.data
-          this.$router.push({ path: '/' })
-          alert('게시글 작성이 완료되었습니다')
+          this.$router.go(-1)
+          alert('게시글 수정이 완료되었습니다')
         })
         .catch((error) => console.log(error))
     },
     addImage(event) {
       console.log(event.target.files[0])
       this.image.push(event.target.files[0])
+    },
+    cancel() {
+      this.$router.go(-1)
+    },
+    deleteFile(changeName) {
+      console.log(changeName)
+      this.fileList.forEach((item, index) => {
+        if (item.changeName === changeName) {
+          this.fileList.splice(index, 1)
+          this.originFileCnt -= 1
+        }
+        console.log(this.fileList)
+      })
     }
   }
 }
@@ -222,18 +245,32 @@ export default {
 .file-add-btn-container {
   display: flex;
 }
-.enroll-btn-container {
+.btn-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
 }
-.enroll-btn {
-  width: 60px;
-  height: 30px;
-  background-color: var(--main-color);
+.btn-container h1 {
+  font-size: 22px;
+  font-weight: 500;
+  margin-left: 5px;
+}
+.enroll-btn, .cancel-btn {
+  width: 65px;
+  height: 35px;
   color: white;
   border: none;
   font-size: 15px;
   cursor: pointer;
+  margin-left: 5px;
+}
+.enroll-btn {
+  background-color: var(--main-color);
+
+}
+.cancel-btn {
+  background-color: rgb(165, 165, 165);
 }
 .enroll-btn:hover {
   background-color: var(--main-color-hover);

@@ -51,7 +51,6 @@
 </template>
 <script>
 import axios from 'axios'
-
 export default {
   props: {
     isActive: {
@@ -90,7 +89,6 @@ export default {
       const loginData = {}
       loginData.email = this.id
       loginData.pwd = this.pwd
-
       axios
         .post('/api/member/login', loginData)
         .then((response) => {
@@ -230,7 +228,6 @@ export default {
   margin: 2px;
 }
 /* 모달 끝 */
-
 /* 로고 */
 #logo div {
   font-size: 30px;

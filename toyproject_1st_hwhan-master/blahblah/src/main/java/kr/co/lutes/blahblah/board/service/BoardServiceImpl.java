@@ -11,6 +11,7 @@ import kr.co.lutes.blahblah.board.vo.BoardSelectVo;
 import kr.co.lutes.blahblah.board.vo.BoardVo;
 import kr.co.lutes.blahblah.board.vo.CategoryVo;
 import kr.co.lutes.blahblah.board.vo.SettingVo;
+import kr.co.lutes.blahblah.common.vo.AttachmentVo;
 
 @Service
 public class BoardServiceImpl implements BoardService{
@@ -79,6 +80,29 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public int deleteBoardOneById(String id) {
         return boardDao.deleteBoardOneById(id);
+    }
+
+    @Override
+    public List<AttachmentVo> updateOriginFile(List<AttachmentVo> remainFileList, String id) {
+
+        System.out.println("게시글 수정 서비스");
+        // 리스트에 없는 파일 DB에서 삭제
+        int result1 = boardDao.deleteOriginFile(remainFileList, id);
+
+        List<AttachmentVo> result2 = null;
+
+        // DB에서 파일 select
+        if(result1 == 1) {
+            result2 = boardDao.getFileListById(id);
+        }
+
+        return result2;
+
+    }
+
+    @Override
+    public int editBoardOne(BoardVo vo) {
+        return boardDao.editBoardOne(vo);
     }
     
 }

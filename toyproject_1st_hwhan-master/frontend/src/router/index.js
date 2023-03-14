@@ -8,6 +8,7 @@ import BoardView from '../views/BoardView.vue'
 import BoardDetailView from '../views/BoardDetailView.vue'
 import BoardEditView from '../views/BoardEditView.vue'
 import BoardWriteView from '../views/BoardWriteView.vue'
+import BoardJsonWriteView from '../views/BoardJsonWriteView.vue'
 
 Vue.use(VueRouter)
 
@@ -51,6 +52,11 @@ const routes = [
     path: '/b/write',
     name: 'BoardWriteView',
     component: BoardWriteView
+  },
+  {
+    path: '/b/json/write',
+    name: 'BoardJsonWriteView',
+    component: BoardJsonWriteView
   }
 
 ]

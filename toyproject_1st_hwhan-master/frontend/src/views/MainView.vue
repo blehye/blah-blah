@@ -57,10 +57,10 @@
         </ul>
       </div>
       <div class="main-ad1">
-        <img src="@/assets/upload/ad1.png" alt="" />
+        <img src="@/assets/img/ad1.png" alt="" />
       </div>
       <div class="main-ad2">
-        <img src="@/assets/upload/ad2.gif" alt="" />
+        <img src="@/assets/img/ad2.gif" alt="" />
       </div>
     </div>
   </div>

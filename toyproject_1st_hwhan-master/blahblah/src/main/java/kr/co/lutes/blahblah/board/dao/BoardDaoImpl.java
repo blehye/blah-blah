@@ -1,5 +1,6 @@
 package kr.co.lutes.blahblah.board.dao;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import kr.co.lutes.blahblah.board.vo.BoardSelectVo;
 import kr.co.lutes.blahblah.board.vo.BoardVo;
 import kr.co.lutes.blahblah.board.vo.CategoryVo;
 import kr.co.lutes.blahblah.board.vo.SettingVo;
+import kr.co.lutes.blahblah.common.vo.AttachmentVo;
 
 @Repository
 public class BoardDaoImpl implements BoardDao{
@@ -171,6 +173,75 @@ public class BoardDaoImpl implements BoardDao{
         try {
             coll =  mongoDB.getCollection(COLL_NAME_BOARD, BoardSelectVo.class);
             coll.updateOne(Filters.eq("_id", new ObjectId(id)), update);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public int deleteOriginFile(List<AttachmentVo> remainFileList, String id) {
+
+        System.out.println("첨부파일 삭제 dao");
+        System.out.println(id);
+
+        MongoCollection<BoardSelectVo> coll = null;
+        Bson update = Updates.set("imageInfoList", remainFileList);
+
+        int result = 0;
+
+        try {
+            coll =  mongoDB.getCollection(COLL_NAME_BOARD, BoardSelectVo.class);
+            coll.updateOne(Filters.eq("_id", new ObjectId(id)), update);
+            result = 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+    @Override
+    public List<AttachmentVo> getFileListById(String id) {
+        MongoCollection<BoardSelectVo> coll = null;
+        BoardSelectVo board = new BoardSelectVo();
+
+        List<Bson> filter = new ArrayList<>();
+        filter.add(Filters.eq("_id", new ObjectId(id)));
+
+        try {
+            coll =  mongoDB.getCollection(COLL_NAME_BOARD, BoardSelectVo.class);
+            board = coll.find(Filters.and(filter)).first();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return board.getImageInfoList();
+    }
+
+    @Override
+    public int editBoardOne(BoardVo vo) {
+
+        MongoCollection<BoardSelectVo> coll = null;
+
+        LocalDateTime now = LocalDateTime.now();
+        vo.setModifyDate(java.sql.Timestamp.valueOf(now));
+
+        List<Bson> list = new ArrayList<>();
+        list.add(Updates.set("category", vo.getCategory()));
+        list.add(Updates.set("title", vo.getTitle()));
+        list.add(Updates.set("content", vo.getContent()));
+        list.add(Updates.set("imageInfoList", vo.getImageInfoList()));
+        list.add(Updates.set("modifyDate", vo.getModifyDate()));
+        Bson update = Updates.combine(list);
+
+        int result = 0;
+
+        try {
+            coll =  mongoDB.getCollection(COLL_NAME_BOARD, BoardSelectVo.class);
+            coll.updateOne(Filters.eq("_id", vo.getId()), update);
+            result = 1;
         } catch (Exception e) {
             e.printStackTrace();
         }

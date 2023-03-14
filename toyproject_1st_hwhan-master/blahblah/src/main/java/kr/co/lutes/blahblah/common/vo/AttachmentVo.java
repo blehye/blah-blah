@@ -11,7 +11,5 @@ public class AttachmentVo {
 	private String changeName;
 	private String filePath;
 	private String enrollDate;
-	private String thumbYn;
-	private String status;
     
 }

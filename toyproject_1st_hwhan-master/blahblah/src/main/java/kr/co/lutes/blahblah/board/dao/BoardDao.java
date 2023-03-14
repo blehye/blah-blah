@@ -6,6 +6,7 @@ import kr.co.lutes.blahblah.board.vo.BoardSelectVo;
 import kr.co.lutes.blahblah.board.vo.BoardVo;
 import kr.co.lutes.blahblah.board.vo.CategoryVo;
 import kr.co.lutes.blahblah.board.vo.SettingVo;
+import kr.co.lutes.blahblah.common.vo.AttachmentVo;
 
 public interface BoardDao {
 
@@ -23,4 +24,10 @@ public interface BoardDao {
     public int updateHit(String id);
 
     public String getCategoryOneByKey(String key);
+
+    public int deleteOriginFile(List<AttachmentVo> remainFileList, String id);
+
+    public List<AttachmentVo> getFileListById(String id);
+
+    public int editBoardOne(BoardVo vo);
 }
